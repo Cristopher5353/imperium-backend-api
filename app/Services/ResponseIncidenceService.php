@@ -5,16 +5,19 @@ namespace App\Services;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Repositories\IncidenceRepository;
 use App\Repositories\ResponseIncidenceRepository;
 use App\Repositories\DocumentIncidenceResponseRepository;
 use App\Models\ResponseIncidence;
 use App\Models\DocumentIncidenceResponse;
 
 class ResponseIncidenceService {
+    protected $incidenceRepository;
     protected $responseIncidenceRepository;
     protected $documentIncidenceResponseRepository;
 
-    public function __construct(ResponseIncidenceRepository $responseIncidenceRepository, DocumentIncidenceResponseRepository $documentIncidenceResponseRepository) {
+    public function __construct(IncidenceRepository $incidenceRepository, ResponseIncidenceRepository $responseIncidenceRepository, DocumentIncidenceResponseRepository $documentIncidenceResponseRepository) {
+        $this->incidenceRepository = $incidenceRepository;
         $this->responseIncidenceRepository = $responseIncidenceRepository;
         $this->documentIncidenceResponseRepository = $documentIncidenceResponseRepository;
     }
@@ -85,5 +88,9 @@ class ResponseIncidenceService {
             "data" => $response
         ];
     }
+
+    function generateRandomString($length = 20) { 
+        return substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length); 
+    } 
 
 }

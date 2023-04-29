@@ -13,8 +13,8 @@ class SubcategoryController extends Controller
         $this->subcategoryService = $subcategoryService;
     }   
 
-    public function getSubcategories() {
-        $response = $this->subcategoryService->getSubcategories();
+    public function getSubcategories(int $page) {
+        $response = $this->subcategoryService->getSubcategories($page);
 
         return response()->json($response);
     }

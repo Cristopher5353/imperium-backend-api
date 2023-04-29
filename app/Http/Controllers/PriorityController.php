@@ -13,8 +13,14 @@ class PriorityController extends Controller
         $this->priorityService = $priorityService;
     }
 
-    public function getPriorities() {
-        $response = $this->priorityService->getPriorities();
+    public function getPrioritiesAll() {
+        $response = $this->priorityService->getPrioritiesAll();
+
+        return response()->json($response);
+    }
+
+    public function getPriorities(int $page) {
+        $response = $this->priorityService->getPriorities($page);
 
         return response()->json($response);
     }

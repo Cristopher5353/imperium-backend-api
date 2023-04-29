@@ -12,6 +12,7 @@ use App\Models\Incidence;
 use App\Models\ImageIncidence;
 use App\Models\DocumentIncidence;
 use App\Custom\ValidateExistById;
+use App\Custom\TotalPages;
 
 class IncidenceService {
     protected $incidenceRepository;
@@ -27,13 +28,23 @@ class IncidenceService {
         $this->documentIncidenceRepository = $documentIncidenceRepository;
     }
 
-    public function getIncidents() {
-        $incidents = $this->incidenceRepository->getIncidents();
+    public function getIncidents(int $page, int $categoryId, int $priorityId, int $userId) {
+        $incidentsAll;
+
+        if($userId == 0) {
+            $incidentsAll = $this->incidenceRepository->getIncidentsAllByUserIdZero($categoryId, $priorityId);
+        } else {
+            $incidentsAll = $this->incidenceRepository->getIncidentsAllByUserIdDiferentZero($categoryId, $priorityId, $userId);
+        }
+
+        $incidents = $this->incidenceRepository->getIncidents($page, $categoryId, $priorityId, $userId);
+        $totalPages = TotalPages::totalPages($incidentsAll->count());
 
         return [
             "status" => 200,
-            "message" => "Listado de Incidencias",
-            "data" => $incidents
+            "message" => "Listado de incidencias",
+            "data" => $incidents,
+            "totalPages" => $totalPages
         ];
     }
 
@@ -133,16 +144,6 @@ class IncidenceService {
             "status" => 200,
             "message" => "Incidencia enviada correctamente",
             "data" => $incidence
-        ];
-    }
-
-    public function getIncidentsByCategoryAndPriority(int $categoryId, int $priorityId, int $userId) {
-        $incidents = $this->incidenceRepository->getIncidentsByCategoryAndPriority($categoryId, $priorityId, $userId);
-
-        return [
-            "status" => 200,
-            "message" => "Listado filtrado de incidencias",
-            "data" => $incidents
         ];
     }
 

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Repositories\SubcategoryRepository;
 use App\Models\Subcategory;
 use App\Custom\ValidateExistById;
+use App\Custom\TotalPages;
 
 class SubcategoryService {
     protected $subcategoryRepository;
@@ -15,13 +16,16 @@ class SubcategoryService {
         $this->subcategoryRepository = $subcategoryRepository;
     }
 
-    public function getSubcategories() {
-        $subcategories = $this->subcategoryRepository->getSubcategories();
-        
+    public function getSubcategories(int $page) {
+        $subcategoriesAll = $this->subcategoryRepository->getSubcategoriesAll();
+        $subcategories = $this->subcategoryRepository->getSubcategories($page);
+        $totalPages = TotalPages::totalPages($subcategoriesAll->count());
+
         return [
             "status" => 200,
             "message" => "Listado de subcategorías",
-            "data" => $subcategories
+            "data" => $subcategories,
+            "totalPages" => $totalPages
         ];
     }
 

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Repositories\CategoryRepository;
 use App\Models\Category;
 use App\Custom\ValidateExistById;
+use App\Custom\TotalPages;
 
 class CategoryService {
     protected $categoryRepository;
@@ -15,13 +16,26 @@ class CategoryService {
         $this->categoryRepository = $categoryRepository;
     }
 
-    public function getCategories() {
-        $categories = $this->categoryRepository->getCategories();
+    public function getCategoriesAll() {
+        $categoriesAll = $this->categoryRepository->getCategoriesAll();
 
         return [
             "status" => 200,
-            "message" => "Listado de categorías",
-            "data" => $categories
+            "message" => "Listado de prioridades",
+            "data" => $categoriesAll,
+        ];
+    }
+
+    public function getCategories(int $page) {
+        $categoriesAll = $this->categoryRepository->getCategoriesAll();
+        $categories = $this->categoryRepository->getCategories($page);
+        $totalPages = TotalPages::totalPages($categoriesAll->count());
+
+        return [
+            "status" => 200,
+            "message" => "Listado de prioridades",
+            "data" => $categories,
+            "totalPages" => $totalPages
         ];
     }
 

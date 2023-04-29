@@ -13,8 +13,8 @@ class IncidenceController extends Controller
         $this->incidenceService = $incidenceService;
     }
 
-    public function getIncidents() {
-        $response = $this->incidenceService->getIncidents();
+    public function getIncidents(int $page, int $categoryId, int $priorityId, int $userId) {
+        $response = $this->incidenceService->getIncidents($page, $categoryId, $priorityId, $userId);
 
         return response()->json($response);
     }
@@ -36,12 +36,6 @@ class IncidenceController extends Controller
 
         return response()->json($response);
     } 
-
-    public function getIncidentsByCategoryAndPriority(int $categoryId, int $priorityId, int $userId) {
-        $response = $this->incidenceService->getIncidentsByCategoryAndPriority($categoryId, $priorityId, $userId);
-
-        return response()->json($response);
-    }
 
     public function deleteAssignedUserIncidence(int $id) {
         $response = $this->incidenceService->deleteAssignedUserIncidence($id);

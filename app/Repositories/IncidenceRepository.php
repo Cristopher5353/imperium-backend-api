@@ -4,18 +4,71 @@ namespace App\Repositories;
 
 use DB;
 use App\Models\Incidence;
+use App\Custom\NumberRows;
 
 class IncidenceRepository {
-    public function getIncidents() {
-        $incidents = DB::table('incidents')
-                    ->join('subcategories', 'incidents.subcategory_id', 'subcategories.id')
-                    ->join('categories', 'subcategories.category_id', 'categories.id')
-                    ->join('priorities', 'incidents.priority_id', 'priorities.id')
-                    ->select('incidents.id AS id', 'categories.name AS category', 'incidents.title AS title', 'priorities.name AS priority',
-                             'incidents.created_at AS created_at','incidents.date_assignment AS date_assignment', 'incidents.deadline AS deadline',
-                             'incidents.user_id AS user')
-                    ->orderBy('incidents.created_at', 'DESC')->get();
 
+    public function getIncidents(int $page, int $categoryId, int $priorityId, int $userId) {
+        if($userId == 0) {
+            $incidents = DB::table('incidents')
+                        ->join('subcategories', 'incidents.subcategory_id', 'subcategories.id')
+                        ->join('categories', 'subcategories.category_id', 'categories.id')
+                        ->join('priorities', 'incidents.priority_id', 'priorities.id')
+                        ->select('incidents.id AS id', 'incidents.title AS title', 'categories.name AS category', 'priorities.name AS priority',
+                                'incidents.description AS description', 'incidents.created_at AS created_at','incidents.date_assignment AS date_assignment', 'incidents.deadline AS deadline',
+                                'incidents.user_id AS user')
+                        ->whereRaw('(categories.id = ' . $categoryId . ' OR ' . $categoryId . ' = 0) AND (priorities.id = ' . $priorityId . ' OR ' . $priorityId . ' = 0)')
+                        ->orderBy('incidents.created_at', 'DESC')
+                        ->skip($page * NumberRows::numberRows())
+                        ->limit(NumberRows::numberRows())
+                        ->get();
+
+            return $incidents;
+        } else {
+            $incidents = DB::table('incidents')
+                        ->join('subcategories', 'incidents.subcategory_id', 'subcategories.id')
+                        ->join('categories', 'subcategories.category_id', 'categories.id')
+                        ->join('priorities', 'incidents.priority_id', 'priorities.id')
+                        ->select('incidents.id AS id', 'incidents.title AS title', 'categories.name AS category', 'priorities.name AS priority',
+                                'incidents.description AS description', 'incidents.created_at AS created_at','incidents.date_assignment AS date_assignment', 'incidents.deadline AS deadline',
+                                'incidents.user_id AS user')
+                        ->whereRaw('(categories.id = ' . $categoryId . ' OR ' . $categoryId . ' = 0) AND (priorities.id = ' . $priorityId . ' OR ' . $priorityId . ' = 0) AND (incidents.user_id = ' . $userId . ')')
+                        ->orderBy('incidents.created_at', 'DESC')
+                        ->skip($page * NumberRows::numberRows())
+                        ->limit(NumberRows::numberRows())
+                        ->get();
+                        
+            return $incidents;
+        }
+    }
+
+    public function getIncidentsAllByUserIdZero(int $categoryId, int $priorityId) {
+        $incidents = DB::table('incidents')
+                        ->join('subcategories', 'incidents.subcategory_id', 'subcategories.id')
+                        ->join('categories', 'subcategories.category_id', 'categories.id')
+                        ->join('priorities', 'incidents.priority_id', 'priorities.id')
+                        ->select('incidents.id AS id', 'incidents.title AS title', 'categories.name AS category', 'priorities.name AS priority',
+                                'incidents.description AS description', 'incidents.created_at AS created_at','incidents.date_assignment AS date_assignment', 'incidents.deadline AS deadline',
+                                'incidents.user_id AS user')
+                        ->whereRaw('(categories.id = ' . $categoryId . ' OR ' . $categoryId . ' = 0) AND (priorities.id = ' . $priorityId . ' OR ' . $priorityId . ' = 0)')
+                        ->orderBy('incidents.created_at', 'DESC')
+                        ->get();
+
+        return $incidents;
+    }
+
+    public function getIncidentsAllByUserIdDiferentZero(int $categoryId, int $priorityId, int $userId) {
+        $incidents = DB::table('incidents')
+                        ->join('subcategories', 'incidents.subcategory_id', 'subcategories.id')
+                        ->join('categories', 'subcategories.category_id', 'categories.id')
+                        ->join('priorities', 'incidents.priority_id', 'priorities.id')
+                        ->select('incidents.id AS id', 'incidents.title AS title', 'categories.name AS category', 'priorities.name AS priority',
+                                'incidents.description AS description', 'incidents.created_at AS created_at','incidents.date_assignment AS date_assignment', 'incidents.deadline AS deadline',
+                                'incidents.user_id AS user')
+                        ->whereRaw('(categories.id = ' . $categoryId . ' OR ' . $categoryId . ' = 0) AND (priorities.id = ' . $priorityId . ' OR ' . $priorityId . ' = 0) AND (incidents.user_id = ' . $userId . ')')
+                        ->orderBy('incidents.created_at', 'DESC')
+                        ->get();
+        
         return $incidents;
     }
 
@@ -55,32 +108,6 @@ class IncidenceRepository {
                     ->first();
 
         return $incidence;
-    }
-
-    public function getIncidentsByCategoryAndPriority(int $categoryId, int $priorityId, int $userId) {
-        if($userId === 0) {
-            $incidents = DB::table('incidents')
-                        ->join('subcategories', 'incidents.subcategory_id', 'subcategories.id')
-                        ->join('categories', 'subcategories.category_id', 'categories.id')
-                        ->join('priorities', 'incidents.priority_id', 'priorities.id')
-                        ->select('incidents.id AS id', 'incidents.title AS title', 'categories.name AS category', 'priorities.name AS priority',
-                                'incidents.description AS description', 'incidents.created_at AS created_at','incidents.date_assignment AS date_assignment', 'incidents.deadline AS deadline',
-                                'incidents.user_id AS user')
-                        ->whereRaw('(categories.id = ' . $categoryId . ' OR ' . $categoryId . ' = 0) AND (priorities.id = ' . $priorityId . ' OR ' . $priorityId . ' = 0)')
-                        ->orderBy('incidents.created_at', 'DESC')->get();
-        } else {
-            $incidents = DB::table('incidents')
-                        ->join('subcategories', 'incidents.subcategory_id', 'subcategories.id')
-                        ->join('categories', 'subcategories.category_id', 'categories.id')
-                        ->join('priorities', 'incidents.priority_id', 'priorities.id')
-                        ->select('incidents.id AS id', 'incidents.title AS title', 'categories.name AS category', 'priorities.name AS priority',
-                                'incidents.description AS description', 'incidents.created_at AS created_at','incidents.date_assignment AS date_assignment', 'incidents.deadline AS deadline',
-                                'incidents.user_id AS user')
-                        ->whereRaw('(categories.id = ' . $categoryId . ' OR ' . $categoryId . ' = 0) AND (priorities.id = ' . $priorityId . ' OR ' . $priorityId . ' = 0) AND (incidents.user_id = ' . $userId . ')')
-                        ->orderBy('incidents.created_at', 'DESC')->get();
-        }
-
-        return $incidents;
     }
     
     public function updateIncidence(Incidence $incidence) {

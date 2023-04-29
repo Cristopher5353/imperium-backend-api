@@ -31,9 +31,9 @@ Route::middleware(['jwt.verify'])->group(function() {
     Route::get('users/{id}', [UserController::class, 'getUserById']);
 
     //Routes api incidents
+    Route::get('incidents/page/{page}/category/{categoryId}/priority/{priorityId}/user/{userId}', [IncidenceController::class, 'getIncidents']);
     Route::get('incidents/{id}', [IncidenceController::class, 'getDetailIncidenceById']);
     Route::get('incidents/users/{userId}', [IncidenceController::class, 'getIncidentsByUser']);
-    Route::get('incidents/category/{categoryId}/priority/{priorityId}/user/{userId}', [IncidenceController::class, 'getIncidentsByCategoryAndPriority']);
     Route::get('incidents/document/{id}', [DocumentIncidenceController::class, 'getDocumentIncidenceById']);
     Route::get('incidents/image/{id}', [ImageIncidenceController::class, 'getImageIncidenceById']);
     Route::get('incidents/get/totalIncidents', [IncidenceController::class, 'getTotalIncidents']);
@@ -45,10 +45,10 @@ Route::middleware(['jwt.verify'])->group(function() {
     Route::get('incidents/response/document/{id}', [DocumentIncidenceResponseController::class, 'getDocumentIncidenceResponseById']);
 
     //Routes api categories
-    Route::get('categories', [CategoryController::class, 'getCategories']);
+    Route::get('categories', [CategoryController::class, 'getCategoriesAll']);
 
     //Routes api priorities
-    Route::get('priorities', [PriorityController::class, 'getPriorities']);
+    Route::get('priorities', [PriorityController::class, 'getPrioritiesAll']);
 
     //Route download document incident
     Route::post('private/documents/{document}', function($document) {
@@ -68,6 +68,7 @@ Route::middleware(['jwt.verify'])->group(function() {
 
 Route::middleware(['jwt.verify', 'jwt.admin'])->group(function () {
     //Routes api categories
+    Route::get('categories/{page}/get', [CategoryController::class, 'getCategories']);
     Route::get('categories/active', [CategoryController::class, 'getCategoriesActive']);
     Route::get('categories/{id}/subcategories', [CategoryController::class, 'getSubcategoriesByIdCategory']);
     Route::get('categories/{id}', [CategoryController::class, 'getCategoryById']);
@@ -76,13 +77,14 @@ Route::middleware(['jwt.verify', 'jwt.admin'])->group(function () {
     Route::put('categories/{id}/changeState', [CategoryController::class, 'changeStateCategory']);
 
     //Routes api subcategories
-    Route::get('subcategories', [SubcategoryController::class, 'getSubcategories']);
+    Route::get('subcategories/{page}/get', [SubcategoryController::class, 'getSubcategories']);
     Route::get('subcategories/{id}', [SubcategoryController::class, 'getSubcategoryById']);
     Route::post('subcategories/create', [SubcategoryController::class, 'saveSubcategory']);
     Route::put('subcategories/{id}', [SubcategoryController::class, 'updateSubcategory']);
     Route::put('subcategories/{id}/changeState', [SubcategoryController::class, 'changeStateSubcategory']);
 
     //Routes api priorities
+    Route::get('priorities/{page}/get', [PriorityController::class, 'getPriorities']);
     Route::get('priorities/active', [PriorityController::class, 'getPrioritiesActive']);
     Route::get('priorities/{id}', [PriorityController::class, 'getPriorityById']);
     Route::post('priorities/create', [PriorityController::class, 'savePriority']);

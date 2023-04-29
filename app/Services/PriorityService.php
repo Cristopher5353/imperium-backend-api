@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Repositories\PriorityRepository;
 use App\Models\Priority;
 use App\Custom\ValidateExistById;
+use App\Custom\TotalPages;
 
 class PriorityService {
     protected $priorityRepository;
@@ -15,13 +16,26 @@ class PriorityService {
         $this->priorityRepository = $priorityRepository;
     }
 
-    public function getPriorities() {
-        $priorities = $this->priorityRepository->getPriorities();
+    public function getPrioritiesAll() {
+        $prioritiesAll = $this->priorityRepository->getPrioritiesAll();
 
         return [
             "status" => 200,
             "message" => "Listado de prioridades",
-            "data" => $priorities
+            "data" => $prioritiesAll,
+        ];
+    }
+
+    public function getPriorities(int $page) {
+        $prioritiesAll = $this->priorityRepository->getPrioritiesAll();
+        $priorities = $this->priorityRepository->getPriorities($page);
+        $totalPages = TotalPages::totalPages($prioritiesAll->count());
+
+        return [
+            "status" => 200,
+            "message" => "Listado de prioridades",
+            "data" => $priorities,
+            "totalPages" => $totalPages
         ];
     }
 

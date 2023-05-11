@@ -29,16 +29,16 @@ class IncidenceService {
     }
 
     public function getIncidents(int $page, int $categoryId, int $priorityId, int $userId) {
-        $incidentsAll;
+        $totalIncidents;
 
         if($userId == 0) {
-            $incidentsAll = $this->incidenceRepository->getIncidentsAllByUserIdZero($categoryId, $priorityId);
+            $totalIncidents = $this->incidenceRepository->getIncidentsAllByUserIdZero($categoryId, $priorityId);
         } else {
-            $incidentsAll = $this->incidenceRepository->getIncidentsAllByUserIdDiferentZero($categoryId, $priorityId, $userId);
+            $totalIncidents = $this->incidenceRepository->getIncidentsAllByUserIdDiferentZero($categoryId, $priorityId, $userId);
         }
 
         $incidents = $this->incidenceRepository->getIncidents($page, $categoryId, $priorityId, $userId);
-        $totalPages = TotalPages::totalPages($incidentsAll->count());
+        $totalPages = TotalPages::totalPages($totalIncidents);
 
         return [
             "status" => 200,

@@ -17,7 +17,8 @@ class IncidenceRepository {
                         ->select('incidents.id AS id', 'incidents.title AS title', 'categories.name AS category', 'priorities.name AS priority',
                                 'incidents.description AS description', 'incidents.created_at AS created_at','incidents.date_assignment AS date_assignment', 'incidents.deadline AS deadline',
                                 'incidents.user_id AS user')
-                        ->whereRaw('(categories.id = ' . $categoryId . ' OR ' . $categoryId . ' = 0) AND (priorities.id = ' . $priorityId . ' OR ' . $priorityId . ' = 0)')
+                        ->whereRaw('(categories.id = :categoryId OR :categoryIdTwo = 0) AND (priorities.id = :priorityId OR :priorityIdTwo = 0)', 
+                                    ['categoryId' => $categoryId, 'categoryIdTwo' => $categoryId, 'priorityId' => $priorityId, 'priorityIdTwo' => $priorityId])
                         ->orderBy('incidents.created_at', 'DESC')
                         ->skip($page * NumberRows::numberRows())
                         ->limit(NumberRows::numberRows())
@@ -32,7 +33,8 @@ class IncidenceRepository {
                         ->select('incidents.id AS id', 'incidents.title AS title', 'categories.name AS category', 'priorities.name AS priority',
                                 'incidents.description AS description', 'incidents.created_at AS created_at','incidents.date_assignment AS date_assignment', 'incidents.deadline AS deadline',
                                 'incidents.user_id AS user')
-                        ->whereRaw('(categories.id = ' . $categoryId . ' OR ' . $categoryId . ' = 0) AND (priorities.id = ' . $priorityId . ' OR ' . $priorityId . ' = 0) AND (incidents.user_id = ' . $userId . ')')
+                        ->whereRaw('(categories.id = :categoryId OR :categoryIdTwo = 0) AND (priorities.id = :priorityId OR :priorityIdTwo = 0) AND (incidents.user_id = :userId)',
+                                    ['categoryId' => $categoryId, 'categoryIdTwo' => $categoryId, 'priorityId' => $priorityId, 'priorityIdTwo' => $priorityId, 'userId' => $userId])
                         ->orderBy('incidents.created_at', 'DESC')
                         ->skip($page * NumberRows::numberRows())
                         ->limit(NumberRows::numberRows())
@@ -50,11 +52,12 @@ class IncidenceRepository {
                         ->select('incidents.id AS id', 'incidents.title AS title', 'categories.name AS category', 'priorities.name AS priority',
                                 'incidents.description AS description', 'incidents.created_at AS created_at','incidents.date_assignment AS date_assignment', 'incidents.deadline AS deadline',
                                 'incidents.user_id AS user')
-                        ->whereRaw('(categories.id = ' . $categoryId . ' OR ' . $categoryId . ' = 0) AND (priorities.id = ' . $priorityId . ' OR ' . $priorityId . ' = 0)')
+                        ->whereRaw('(categories.id = :categoryId OR :categoryIdTwo = 0) AND (priorities.id = :priorityId OR :priorityIdTwo = 0)',
+                                    ['categoryId' => $categoryId, 'categoryIdTwo' => $categoryId, 'priorityId' => $priorityId, 'priorityIdTwo' => $priorityId])
                         ->orderBy('incidents.created_at', 'DESC')
                         ->get();
 
-        return $incidents;
+        return $incidents->count();
     }
 
     public function getIncidentsAllByUserIdDiferentZero(int $categoryId, int $priorityId, int $userId) {
@@ -65,11 +68,12 @@ class IncidenceRepository {
                         ->select('incidents.id AS id', 'incidents.title AS title', 'categories.name AS category', 'priorities.name AS priority',
                                 'incidents.description AS description', 'incidents.created_at AS created_at','incidents.date_assignment AS date_assignment', 'incidents.deadline AS deadline',
                                 'incidents.user_id AS user')
-                        ->whereRaw('(categories.id = ' . $categoryId . ' OR ' . $categoryId . ' = 0) AND (priorities.id = ' . $priorityId . ' OR ' . $priorityId . ' = 0) AND (incidents.user_id = ' . $userId . ')')
+                        ->whereRaw('(categories.id = :categoryId OR :categoryIdTwo = 0) AND (priorities.id = :priorityId OR :priorityIdTwo = 0) AND (incidents.user_id = :userId)',
+                                    ['categoryId' => $categoryId, 'categoryIdTwo' => $categoryId, 'priorityId' => $priorityId, 'priorityIdTwo' => $priorityId, 'userId' => $userId])
                         ->orderBy('incidents.created_at', 'DESC')
                         ->get();
         
-        return $incidents;
+        return $incidents->count();
     }
 
     public function getIncidenceById(int $id) {
